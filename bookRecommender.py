@@ -52,12 +52,63 @@ def index():
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Book Recommendation System</title>
-            <link rel="stylesheet" type="text/css" href="static/style.css">
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background-color: #f8f9fa;
+                }
+                h1 {
+                    color: #2c3e50;
+                    text-align: center;
+                    margin-bottom: 30px;
+                    padding-bottom: 15px;
+                    border-bottom: 2px solid #e74c3c;
+                }
+                form {
+                    display: flex;
+                    flex-direction: column;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background: white;
+                    padding: 25px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+                input[type="text"] {
+                    padding: 12px;
+                    margin-bottom: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 16px;
+                }
+                input[type="submit"] {
+                    background-color: #e74c3c;
+                    color: white;
+                    border: none;
+                    padding: 12px;
+                    cursor: pointer;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    transition: background-color 0.3s;
+                }
+                input[type="submit"]:hover {
+                    background-color: #c0392b;
+                }
+                #recommendations {
+                    margin-top: 30px;
+                }
+            </style>
         </head>
         <body>
             <h1>Welcome to the Book Recommendation System!</h1>
             <form method="POST" action="/recommend">
-                <input type="text" name="book_title" placeholder="Enter a book title for a book that you like" required>
+                <input type="text" name="book_title" placeholder="Enter a book title that you like" required>
                 <input type="submit" value="Get Recommendations">
             </form>
             <div id="recommendations"></div>
@@ -72,13 +123,79 @@ def recommend():
     if user_input:
         recommendations = recommend_books(user_input)
         recommendations_html = '''
-            <h2>Recommended Books:</h2>
-            <table>
-                <tr>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Year</th>
-                </tr>
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Book Recommendations</title>
+                <style>
+                    body {
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        line-height: 1.6;
+                        color: #333;
+                        max-width: 1200px;
+                        margin: 0 auto;
+                        padding: 20px;
+                        background-color: #f8f9fa;
+                    }
+                    h2 {
+                        color: #2c3e50;
+                        text-align: center;
+                        margin-bottom: 25px;
+                        padding-bottom: 10px;
+                        border-bottom: 2px solid #e74c3c;
+                    }
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin: 25px 0;
+                        background-color: white;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        border-radius: 8px;
+                        overflow: hidden;
+                    }
+                    th, td {
+                        padding: 15px;
+                        text-align: left;
+                        border-bottom: 1px solid #ddd;
+                    }
+                    th {
+                        background-color: #e74c3c;
+                        color: white;
+                        font-weight: bold;
+                    }
+                    tr:hover {
+                        background-color: #f5f5f5;
+                    }
+                    tr:nth-child(even) {
+                        background-color: #f9f9f9;
+                    }
+                    .back-button {
+                        display: block;
+                        width: 200px;
+                        margin: 20px auto;
+                        padding: 10px;
+                        background-color: #3498db;
+                        color: white;
+                        text-align: center;
+                        text-decoration: none;
+                        border-radius: 4px;
+                        font-weight: bold;
+                    }
+                    .back-button:hover {
+                        background-color: #2980b9;
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>Recommended Books Based on Your Selection</h2>
+                <table>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Year</th>
+                    </tr>
         '''
         for index, row in recommendations.iterrows():
             recommendations_html += f'''
@@ -88,9 +205,14 @@ def recommend():
                     <td>{row['Year']}</td>
                 </tr>
             '''
-        recommendations_html += '</table>'
+        recommendations_html += '''
+                </table>
+                <a href="/" class="back-button">Search Again</a>
+            </body>
+            </html>
+        '''
 
-        return render_template_string(recommendations_html)
+        return recommendations_html
 
 # Start Flask app
 if __name__ == '__main__':
